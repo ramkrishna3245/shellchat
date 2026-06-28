@@ -68,8 +68,8 @@ class CommandInput(Input):
         Binding("down", "history_down", "History Down", show=False),
     ]
 
-    def __init__(self) -> None:
-        super().__init__(placeholder="Describe what you want to do...")
+    def __init__(self, **kwargs) -> None:
+        super().__init__(placeholder="Describe what you want to do...", **kwargs)
         self._history: list[str] = []
         self._history_index = -1
 
