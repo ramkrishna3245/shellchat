@@ -68,6 +68,7 @@ Edit `~/.shellchat/config.json`:
   "model": "llama3.2",
   "ollama_url": "http://localhost:11434",
   "openai_api_key": "",
+  "openai_base_url": "https://api.openai.com/v1",
   "openai_model": "gpt-4o-mini",
   "auto_execute": true,
   "safe_mode": true,
@@ -77,10 +78,41 @@ Edit `~/.shellchat/config.json`:
 
 ### AI Providers
 
-**Ollama** (default, free & local):
+ShellChat supports **any OpenAI-compatible API** and **Ollama**.
+
+#### Built-in providers (set `ai_provider` to one of these):
+
+| Provider     | Default Model                        | API Base URL                        |
+|-------------|--------------------------------------|-------------------------------------|
+| `ollama`    | `llama3.2`                           | http://localhost:11434              |
+| `openai`    | `gpt-4o-mini`                        | https://api.openai.com/v1           |
+| `groq`      | `llama-3.3-70b-versatile`            | https://api.groq.com/openai/v1     |
+| `together`  | `mistralai/Mixtral-8x22B-Instruct-v0.1` | https://api.together.xyz/v1    |
+| `deepseek`  | `deepseek-chat`                      | https://api.deepseek.com/v1        |
+| `perplexity`| `sonar-pro`                          | https://api.perplexity.ai          |
+
+#### Use **any** OpenAI-compatible API:
+
+Set `"ai_provider": "openai"`, then change `openai_base_url` and `openai_model` to match your provider. This works with any API that has a `/v1/chat/completions` endpoint.
+
+#### Examples:
+
+**Ollama** (free, local):
 ```bash
 ollama pull llama3.2
 ```
 
-**OpenAI**:
-Set `"ai_provider": "openai"` and add your `openai_api_key`.
+**Groq** (free tier):
+```json
+{ "ai_provider": "groq", "openai_api_key": "gsk_..." }
+```
+
+**Any custom API**:
+```json
+{
+  "ai_provider": "openai",
+  "openai_base_url": "https://your-api.com/v1",
+  "openai_model": "your-model",
+  "openai_api_key": "your-key"
+}
+```

@@ -206,6 +206,8 @@ class ShellChatApp(App):
             self.set_timer(0.5, self.exit)
         elif cmd == "help":
             self._show_help()
+        elif cmd == "providers":
+            self._show_providers()
         elif cmd == "settings":
             self._show_settings()
         elif cmd.startswith("model "):
@@ -232,14 +234,37 @@ class ShellChatApp(App):
         history.write("  Example: [bold]$ls -la[/]")
         history.write("")
         history.write("[bold]:commands[/]")
-        history.write("  :clear    - Clear chat")
-        history.write("  :help     - This help")
-        history.write("  :settings - Show current config")
-        history.write("  :model <name> - Set AI model")
-        history.write("  :provider <ollama|openai> - Set AI provider")
-        history.write("  :exit     - Quit")
+        history.write("  :clear       - Clear chat")
+        history.write("  :help        - This help")
+        history.write("  :settings    - Show current config")
+        history.write("  :model <n>   - Set AI model name")
+        history.write("  :provider <p>- Set AI provider")
+        history.write("  :providers   - List available providers")
+        history.write("  :exit        - Quit")
+        history.write("")
+        history.write("[bold]AI Providers (any OpenAI-compatible API works):[/]")
+        for name, info in cfg.PROVIDERS.items():
+            history.write(f"  [bold]{name}[/] - {info['label']} ({info['model']})")
         history.write("")
         history.write("[bold]Settings file:[/] ~/.shellchat/config.json")
+        history.write("  Set openai_base_url + openai_api_key to use any OpenAI-compatible API")
+        history.write("")
+
+    def _show_providers(self) -> None:
+        history = self.query_one(ChatHistory)
+        history.write("")
+        history.write("[bold underline]Available AI Providers[/]")
+        history.write("")
+        for name, info in cfg.PROVIDERS.items():
+            default = " (default)" if name == CONFIG.get("ai_provider") else ""
+            history.write(f"  [bold]{name}[/]{default} — {info['label']}")
+            history.write(f"    Model: {info['model']}")
+            if info["openai_base_url"]:
+                history.write(f"    API: {info['openai_base_url']}")
+        history.write("")
+        history.write("[dim]To use any other OpenAI-compatible API:[/]")
+        history.write("[dim]  Set ai_provider to 'openai', then change openai_base_url[/]")
+        history.write("[dim]  and openai_model in ~/.shellchat/config.json[/]")
         history.write("")
 
     def _show_settings(self) -> None:

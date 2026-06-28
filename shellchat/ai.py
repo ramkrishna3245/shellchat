@@ -48,17 +48,18 @@ def ask_ollama(messages: list[dict], model: str, url: str, timeout: int = 30) ->
         return {"command": "", "explanation": f"[red]AI Error: {e}[/]", "safe": True}
 
 
-def ask_openai(messages: list[dict], model: str, api_key: str, timeout: int = 30) -> dict | None:
+def ask_openai(messages: list[dict], model: str, api_key: str, base_url: str, timeout: int = 30) -> dict | None:
     if not api_key:
-        return {"command": "", "explanation": "[red]OpenAI API key not configured. Set it in ~/.shellchat/config.json[/]", "safe": True}
+        return {"command": "", "explanation": "[red]API key not configured. Set openai_api_key in ~/.shellchat/config.json[/]", "safe": True}
     payload = {
         "model": model,
         "messages": [{"role": "system", "content": SYSTEM_PROMPT}] + messages,
         "temperature": 0.1,
     }
     data = json.dumps(payload).encode()
+    url = f"{base_url.rstrip('/')}/chat/completions"
     req = urllib.request.Request(
-        "https://api.openai.com/v1/chat/completions",
+        url,
         data=data,
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"},
         method="POST",
@@ -76,18 +77,19 @@ def ask(config: dict, messages: list[dict]) -> dict:
     provider = config.get("ai_provider", "ollama")
     timeout = config.get("timeout", 30)
 
-    if provider == "openai":
-        result = ask_openai(
-            messages,
-            config.get("openai_model", "gpt-4o-mini"),
-            config.get("openai_api_key", ""),
-            timeout,
-        )
-    else:
+    if provider == "ollama":
         result = ask_ollama(
             messages,
             config.get("model", "llama3.2"),
             config.get("ollama_url", "http://localhost:11434"),
+            timeout,
+        )
+    else:
+        result = ask_openai(
+            messages,
+            config.get("openai_model", "gpt-4o-mini"),
+            config.get("openai_api_key", ""),
+            config.get("openai_base_url", "https://api.openai.com/v1"),
             timeout,
         )
 
