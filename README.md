@@ -1,51 +1,86 @@
-# ShellChat 🐚💬
+# ShellChat 🐚🤖
 
-Turn your terminal into a ChatGPT-like chat experience.
+**Turn your terminal into an AI-powered chat experience.**
 
-No more remembering complex shell commands — just type what you want in natural language, and ShellChat runs it for you in a beautiful chat-style TUI.
+Type what you want in natural language — ShellChat uses AI (Ollama or OpenAI) to suggest and execute shell commands for you.
 
 ## Features
 
-- Chat-style interface in your terminal
-- Execute any shell command by typing it naturally
-- Syntax-highlighted output
-- Command history (Up/Down arrow)
-- Session persistence
-- Beautiful Textual-based TUI
+- 🤖 **AI-powered** — Describe what you want, AI generates the command
+- 💬 **Chat-style TUI** — Beautiful Textual-based interface
+- ⚡ **Streaming output** — Real-time command output
+- 🎨 **Syntax highlighting** — Rich-colored command output
+- 💾 **Session persistence** — Chat history saved across sessions
+- ⚙️ **Configurable** — Switch between Ollama (local) and OpenAI
+- 🔒 **Safe mode** — Warns before running dangerous commands
+- ⌨️ **Command history** — Up/Down arrow navigation
 
-## Installation
+## Quick Start
 
 ```bash
 pip install -r requirements.txt
+python -m shellchat
 ```
 
 ## Usage
 
-```bash
-python -m shellchat
+### AI Mode (default)
+Just type naturally:
+```
+> show me all files larger than 100MB
+```
+ShellChat asks AI, shows the command, and runs it.
+
+### Raw Shell
+Prefix with `$` to run a command directly:
+```
+> $ls -la
+> $docker ps
 ```
 
-Or after installing:
+### Slash Commands
 
-```bash
-shellchat
-```
+| Command              | Action                     |
+|----------------------|----------------------------|
+| `:clear`             | Clear chat                 |
+| `:help`              | Show help                  |
+| `:settings`          | Show current config        |
+| `:model <name>`      | Set AI model               |
+| `:provider <name>`   | Set provider (ollama/openai) |
+| `:exit`              | Quit                       |
 
-Type a command and press Enter. Your command runs in the system shell and the output appears in a chat bubble.
+### Keyboard
 
-### Special Commands
-
-| Command  | Action           |
+| Key      | Action           |
 |----------|------------------|
-| `:clear` | Clear chat       |
-| `:help`  | Show help        |
-| `:exit`  | Exit ShellChat   |
+| Enter    | Send message     |
+| Up/Down  | Command history  |
+| Ctrl+L   | Clear chat       |
+| Esc      | Cancel           |
 
-### Keyboard Shortcuts
+## Configuration
 
-| Key     | Action           |
-|---------|------------------|
-| Enter   | Send message     |
-| Up/Down | Command history  |
-| Ctrl+L  | Clear chat       |
-| Esc     | Cancel operation |
+Edit `~/.shellchat/config.json`:
+
+```json
+{
+  "ai_provider": "ollama",
+  "model": "llama3.2",
+  "ollama_url": "http://localhost:11434",
+  "openai_api_key": "",
+  "openai_model": "gpt-4o-mini",
+  "auto_execute": true,
+  "safe_mode": true,
+  "timeout": 60
+}
+```
+
+### AI Providers
+
+**Ollama** (default, free & local):
+```bash
+ollama pull llama3.2
+```
+
+**OpenAI**:
+Set `"ai_provider": "openai"` and add your `openai_api_key`.
